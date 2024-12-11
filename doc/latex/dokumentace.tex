@@ -1,0 +1,140 @@
+\documentclass[11pt, a4paper]{article}
+\usepackage[left=1.4cm,text={18.2cm, 25.2cm},top=2.3cm]{geometry}
+
+\usepackage{times}
+\usepackage[czech]{babel}
+\usepackage[IL2]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage[bottom]{footmisc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{a4paper}
+
+\begin{document}
+
+\begin{titlepage}
+\thispagestyle{empty}
+
+    \begin{center}
+
+        {\Huge \textsc{Vysoké učení technické v~Brně \\[0.5em]}}
+
+        {\huge \textsc{Fakulta informačních technologií}}
+
+        \vspace{\stretch{0.382}}
+
+        {\Large Mikroprocesorové a vstavané systémy \\[0.5em]
+        \LARGE Digitálne FM rádio (modul RDA5807M a zosilovač PAM8407) 
+         }
+
+        \vspace{\stretch{0.618}}
+
+    \end{center}
+{\Large 2024 \hfill Boris Hatala (xhatal02)}
+
+\end{titlepage}
+
+\newpage
+\tableofcontents
+\newpage
+
+
+\section{Úvod}
+Táto dokumentácia opisuje návrh a implementáciu digitálneho FM rádia postaveného 
+na hardvéri ESP32 a ďalších súčastiach.
+
+\subsection{Cieľ projektu}
+Cieľom je vytvoriť funkčné digitálne FM rádio, 
+ktoré umožňuje používateľovi nastavovať frekvenciu v pásme 76MHz až 108Mhz FM a 
+ovládať hlasitosť.
+
+\section{Použité metódy a technológie}
+\subsection{Hardvér}
+\begin{itemize}
+    \item Doska ESP32 Wemos D1 R32\footnote{\url{https://docs.platformio.org/en/latest/boards/espressif32/wemos_d1_uno32.html}}
+    \item Modul s OLED displejom 0,96`` \-\ Adafruit\footnote{\url{https://www.hadex.cz/m508a-displej-oled-096-128x64-znaku-7pinu-bily/}}
+    \item FM príjmač na bázi čipsetu RDA5807M\footnote{\url{https://www.hadex.cz/m501a-fm-prijimac-pro-arduino-modul-rrd102-v20-io-rda5807m/}}
+    \item Audio zosilovač PAM8407D\footnote{\url{https://www.diodes.com/assets/Datasheets/products_inactive_data/PAM8407.pdf}}
+    \item Rotačný enkodér KY-040\footnote{\url{https://elty.pl/cs_CZ/p/Impulsni-modul-snimace-KY-040/1155}}
+\end{itemize}
+\subsection{Software}
+Program je napísaný v jazyku XXX vo vývojovom prostredí XXX. Boli použité knižnice XXX\dots
+
+\section{Použitie}
+
+\section{Implementačné detaily}
+\subsection{Zapojenie}
+\subsubsection{Pripojenie FM modulu RDA5807M}
+
+\begin{tabular}{|c|c|}
+\hline
+\textbf{FM Pin} & \textbf{ESP32 Pin} \\
+\hline
+VDD & 3.3V \\
+GND & GND \\
+SDA & GPIO21 (SDA) \\
+SCK & GPIO22 (SCL) \\
+RCH & RINP (Pin 01 na PAM8407) \\
+LCH & LINP (Pin 08 na PAM8407) \\
+ANT & Drôtová anténa (cca 10–15 cm) \\
+\hline
+\end{tabular}
+
+\subsubsection{Pripojenie OLED displeja (SPI rozhranie)}
+
+\begin{tabular}{|c|c|}
+\hline
+\textbf{OLED Pin} & \textbf{ESP32 Pin} \\
+\hline
+GND & GND \\
+VCC & 3.3V alebo 5V (podľa OLED displeja) \\
+D0 (Clock) & GPIO18 (SCK) \\
+D1 (Data: SDA or MOSI)& GPIO23 (MOSI) \\
+RES & GPIO16 \\
+DC & GPIO17 \\
+CS & GPIO5 \\
+\hline
+\end{tabular}
+\\
+
+\subsubsection{Pripojenie zosilňovača PAM8407}
+
+\textbf{Vstupy (z FM modulu):}
+
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{PAM Pin}    & \textbf{FM Pin} & \textbf{ESP32 Pin} \\
+\hline
+RINP (Pin 01)       & RCH                          & -- \\
+LINP (Pin 08)       & LCH                          & -- \\
+RINN (Pin 02)       & --                          & GND \\
+LINN (Pin 07)       & --                          & GND \\
+VDD                 & --                            & 5V \\
+GND                 & --                            & GND \\
+\hline
+\end{tabular}
+    
+
+\subsubsection{Pripojenie enkodéru KY-040}
+
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Enkodér Pin} & \textbf{ESP32 Pin} \\
+\hline
+CLK & GPIO33 \\
+DT  & GPIO32 \\
+SW  & GPIO25 \\
++   & 3.3V \\
+GND & GND \\
+\hline
+\end{tabular}
+
+\section{Záver}
+
+
+
+\end{document}
