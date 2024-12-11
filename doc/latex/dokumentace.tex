@@ -53,6 +53,7 @@ ktoré umožňuje používateľovi nastavovať frekvenciu v pásme 76MHz až 108
 ovládať hlasitosť.
 
 \section{Použité metódy a technológie}
+Program je napísaný v jazyku C++ vo vývojovm prostredí Arduino IDE. \footnote{\url{https://www.arduino.cc/en/software}}
 \subsection{Hardvér}
 \begin{itemize}
     \item Doska ESP32 Wemos D1 R32\footnote{\url{https://docs.platformio.org/en/latest/boards/espressif32/wemos_d1_uno32.html}}
@@ -61,66 +62,90 @@ ovládať hlasitosť.
     \item Audio zosilovač PAM8407D\footnote{\url{https://www.diodes.com/assets/Datasheets/products_inactive_data/PAM8407.pdf}}
     \item Rotačný enkodér KY-040\footnote{\url{https://elty.pl/cs_CZ/p/Impulsni-modul-snimace-KY-040/1155}}
 \end{itemize}
-\subsection{Software}
-Program je napísaný v jazyku XXX vo vývojovom prostredí XXX. Boli použité knižnice XXX\dots
+\subsection{Knižnice}
+\begin{itemize}
+    \item Wire 
+    \item Adafruit GFX \footnote{\url{https://github.com/adafruit/Adafruit-GFX-Library}}
+    \item Adafruit SSD1306 \footnote{\url{https://github.com/adafruit/Adafruit_SSD1306}}
+    \item PU2CLR RDA5807 \footnote{\url{https://github.com/pu2clr/RDA5807}} 
+\end{itemize}
 
 \section{Použitie}
 
 \section{Implementačné detaily}
 \subsection{Zapojenie}
-\subsubsection{Pripojenie FM modulu RDA5807M}
+\subsubsection{Zapojenie FM modulu RDA5807M a OLED displeja}
 
-\begin{tabular}{|c|c|}
-\hline
-\textbf{FM Pin} & \textbf{ESP32 Pin} \\
-\hline
-VDD & 3.3V \\
-GND & GND \\
-SDA & GPIO21 (SDA) \\
-SCK & GPIO22 (SCL) \\
-RCH & RINP (Pin 01 na PAM8407) \\
-LCH & LINP (Pin 08 na PAM8407) \\
-ANT & Drôtová anténa (cca 10–15 cm) \\
-\hline
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\textbf{FM modul RDA5807M}
+\begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{FM Pin} & \textbf{ESP32 Pin} & \textbf{PAM8407 Pin} \\
+    \hline
+    VDD & 3.3V & -- \\
+    GND & GND & -- \\
+    SDA & GPIO21 (SDA) & -- \\
+    SCK & GPIO22 (SCL) & -- \\
+    RCH & -- & 08 \\
+    LCH & -- & 09 \\
+    ANT & Drôtová anténa & -- \\
+    NC\textbar GND & -- & -- \\
+    NC\textbar GND & -- & --\\
+    \hline
 \end{tabular}
-
-\subsubsection{Pripojenie OLED displeja (SPI rozhranie)}
-
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\textbf{OLED displej Adafruit}
 \begin{tabular}{|c|c|}
-\hline
-\textbf{OLED Pin} & \textbf{ESP32 Pin} \\
-\hline
-GND & GND \\
-VCC & 3.3V alebo 5V (podľa OLED displeja) \\
-D0 (Clock) & GPIO18 (SCK) \\
-D1 (Data: SDA or MOSI)& GPIO23 (MOSI) \\
-RES & GPIO16 \\
-DC & GPIO17 \\
-CS & GPIO5 \\
-\hline
+    \hline
+    \textbf{OLED Pin} & \textbf{ESP32 Pin} \\
+    \hline
+    GND & GND \\
+    VCC & 3.3V \\
+    D0  & GPIO18 (SCK) \\
+    D1  & GPIO23 (MOSI) \\
+    RES & GPIO16 \\
+    DC & GPIO17 \\
+    CS & GPIO5 \\
+    \hline
 \end{tabular}
-\\
+\end{minipage}
 
 \subsubsection{Pripojenie zosilňovača PAM8407}
-
-\textbf{Vstupy (z FM modulu):}
-
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\textbf{Zosilňovač PAM8407}
 \begin{tabular}{|c|c|c|}
 \hline
-\textbf{PAM Pin}    & \textbf{FM Pin} & \textbf{ESP32 Pin} \\
+\textbf{PAM8407 Pin} & \textbf{FM Pin} & \textbf{ESP32 Pin}\\
 \hline
-RINP (Pin 01)       & RCH                          & -- \\
-LINP (Pin 08)       & LCH                          & -- \\
-RINN (Pin 02)       & --                          & GND \\
-LINN (Pin 07)       & --                          & GND \\
-VDD                 & --                            & 5V \\
-GND                 & --                            & GND \\
+00 & -- & -- \\
+01 & -- & -- \\
+02 & -- & -- \\
+03 & -- & 5V \\
+04 & -- & 5V \\
+05 & -- & 3.3V \\
+06 & -- & 3.3V \\
+07 & -- & GND \\
+08 & RCH & -- \\
+09 & LCH & -- \\
+10 & -- & GND \\
+11 & -- & -- \\
+12 & -- & -- \\
+13 & -- & GND \\
+14 & -- & -- \\
+15 & -- & -- \\
+16 & -- & -- \\
 \hline
 \end{tabular}
-    
-
-\subsubsection{Pripojenie enkodéru KY-040}
-
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\textbf{Enkodér KY-040}
 \begin{tabular}{|c|c|}
 \hline
 \textbf{Enkodér Pin} & \textbf{ESP32 Pin} \\
@@ -128,13 +153,14 @@ GND                 & --                            & GND \\
 CLK & GPIO33 \\
 DT  & GPIO32 \\
 SW  & GPIO25 \\
-+   & 3.3V \\
++   & 5V \\
 GND & GND \\
 \hline
 \end{tabular}
+\end{minipage}
+
+\subsection{Implementácia}
 
 \section{Záver}
-
-
 
 \end{document}
