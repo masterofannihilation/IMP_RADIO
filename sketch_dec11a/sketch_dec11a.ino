@@ -2,29 +2,37 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <RDA5807.h>
+#include "KY040rotary.h"
 
 // I2C bus pin on ESP32
 #define ESP32_I2C_SDA 21
 #define ESP32_I2C_SCL 22
 
-// OLED displej - definovanie rozmerov
+// OLED display dimensions
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 
-// Definovanie pinov pre SPI pripojenie OLED displeja
+// SPI pin definitions for OLED
 #define OLED_CS   5   // Chip Select
 #define OLED_DC   17  // Data/Command
 #define OLED_RESET 16 // Reset
 
-// Vytvorenie objektu pre OLED
+// Rotary Encoder Pins
+#define ENCODER_CLK 34 // CLK pin
+#define ENCODER_DT  35 // DT pin
+#define ENCODER_SW  25 // SW pin (Button)
+
+bool isVolumeMode = false; // Track whether encoder changes volume or frequency
+
+// Create OLED object
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &SPI, OLED_DC, OLED_RESET, OLED_CS);
 
-#define MAX_DELAY_RDS 40   // 40ms - polling method
+RDA5807 rx; // RDA5807 object
 
-long rds_elapsed = millis();
+// Create KY040 rotary encoder object
+KY040 myEncoder(ENCODER_CLK, ENCODER_DT, ENCODER_SW);
 
-RDA5807 rx;
-
+// Function to show help on serial monitor
 void showHelp()
 {
   Serial.println("Type U to increase and D to decrease the frequency");
@@ -36,7 +44,7 @@ void showHelp()
   delay(1000);
 }
 
-// Aktualizácia OLED displeja
+// Function to update the OLED display
 void updateDisplay()
 {
   display.clearDisplay();
@@ -67,88 +75,96 @@ void updateDisplay()
   display.display();
 }
 
+// Function to show the current radio status
 void showStatus()
 {
   char aux[80];
-  sprintf(aux,"\nYou are tuned on %u MHz | RSSI: %3.3u dbUv | Vol: %2.2u | %s ",rx.getFrequency(), rx.getRssi(), rx.getVolume(), (rx.isStereo()) ? "Yes" : "No" );
+  sprintf(aux, "\nYou are tuned on %u MHz | RSSI: %3.3u dBuV | Vol: %2.2u | %s ",
+          rx.getFrequency(), rx.getRssi(), rx.getVolume(), (rx.isStereo()) ? "Yes" : "No");
   Serial.print(aux);
   updateDisplay();
 }
 
+// Rotary Encoder Callback for Button Press
+void onButtonPress()
+{
+  Serial.println("button press");
+  isVolumeMode = !isVolumeMode; // Toggle mode
+  updateDisplay();
+}
+
+// Rotary Encoder Callback for Right Turn
+void onEncoderRight()
+{
+  Serial.println("clockwise");
+  if (isVolumeMode) {
+    int newVolume = constrain(rx.getVolume() + 1, 0, 15);
+    rx.setVolume(newVolume);
+  } else {
+    int newFrequency = constrain(rx.getFrequency() + 10, 8700, 10800); // FM range in 100kHz steps
+    rx.setFrequency(newFrequency);
+  }
+  showStatus();
+}
+
+// Rotary Encoder Callback for Left Turn
+void onEncoderLeft()
+{
+  Serial.println("counter clockwise");
+  if (isVolumeMode) {
+    int newVolume = constrain(rx.getVolume() - 1, 0, 15);
+    rx.setVolume(newVolume);
+  } else {
+    int newFrequency = constrain(rx.getFrequency() - 10, 8700, 10800); // FM range in 100kHz steps
+    rx.setFrequency(newFrequency);
+  }
+  showStatus();
+}
+
 void setup()
 {
-    Serial.begin(115200);
-    while (!Serial) ;
+  Serial.begin(115200);
+  while (!Serial);
 
-    // Inicializácia OLED displeja
-    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
-        Serial.println(F("OLED initialization failed!"));
-        for (;;);
-    }
+  // Initialize OLED display
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+    Serial.println(F("OLED initialization failed!"));
+    for (;;);
+  }
 
-    display.clearDisplay();
-    display.setTextSize(1);
-    display.setTextColor(SSD1306_WHITE);
-    display.setCursor(0, 0);
-    display.println("Initializing...");
-    display.display();
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
+  display.println("Initializing...");
+  display.display();
 
-    // Inicializácia RDA5807
-    Wire.begin(ESP32_I2C_SDA, ESP32_I2C_SCL);
-    rx.setup();
+  // Initialize RDA5807
+  Wire.begin(ESP32_I2C_SDA, ESP32_I2C_SCL);
+  rx.setup();
 
-    rx.setVolume(2);
-    delay(500);
+  rx.setVolume(0); // Set initial volume
+  delay(500);
 
-    // Zvolenie stanice s RDS
-    Serial.print("\nStation 106.5MHz");
-    rx.setFrequency(10550); // Frekvencia * 100
+  // Set initial station
+  Serial.print("\nStation 106.5MHz");
+  rx.setFrequency(10650); // Frequency * 100
 
-    // Povolenie RDS
-    rx.setRDS(true);
+  // Enable RDS
+  rx.setRDS(true);
 
-    showHelp();
-    showStatus();
+  showHelp();
+  showStatus();
+
+  // Initialize KY040 Rotary Encoder
+  myEncoder.Begin();
+  myEncoder.OnButtonClicked(onButtonPress);
+  myEncoder.OnButtonRight(onEncoderRight);
+  myEncoder.OnButtonLeft(onEncoderLeft);
 }
 
 void loop()
 {
-  if (Serial.available() > 0)
-  {
-    char key = Serial.read();
-    switch (key)
-    {
-    case '+':
-      rx.setVolumeUp();
-      break;
-    case '-':
-      rx.setVolumeDown();
-      break;
-    case 'U':
-    case 'u':
-      rx.setFrequencyUp();
-      break;
-    case 'D':
-    case 'd':
-      rx.setFrequencyDown();
-      break;
-    case 'S':
-      rx.seek(RDA_SEEK_WRAP, RDA_SEEK_UP);
-      break;
-    case 's':
-      rx.seek(RDA_SEEK_WRAP, RDA_SEEK_DOWN);
-      break;
-    case '0':
-      showStatus();
-      break;
-    case '?':
-      showHelp();
-      break;
-    default:
-      break;
-    }
-    delay(200);
-    showStatus();
-  } 
-  delay(5);
+  myEncoder.Process(millis()); // Handle encoder updates
+  delay(5); // Small delay to prevent excessive CPU usage
 }
