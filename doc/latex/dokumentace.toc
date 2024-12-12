@@ -4,10 +4,13 @@
 \contentsline {section}{\numberline {2}Použité metódy a technológie}{2}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Hardvér}{2}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}Knižnice}{2}{subsection.2.2}%
-\contentsline {section}{\numberline {3}Použitie}{3}{section.3}%
+\contentsline {section}{\numberline {3}Použitie}{2}{section.3}%
 \contentsline {section}{\numberline {4}Implementačné detaily}{3}{section.4}%
 \contentsline {subsection}{\numberline {4.1}Zapojenie}{3}{subsection.4.1}%
 \contentsline {subsubsection}{\numberline {4.1.1}Zapojenie FM modulu RDA5807M a OLED displeja}{3}{subsubsection.4.1.1}%
-\contentsline {subsubsection}{\numberline {4.1.2}Pripojenie zosilňovača PAM8407}{3}{subsubsection.4.1.2}%
+\contentsline {subsubsection}{\numberline {4.1.2}Pripojenie zosilňovača PAM8407 a enkodéra KY--040}{3}{subsubsection.4.1.2}%
 \contentsline {subsection}{\numberline {4.2}Implementácia}{3}{subsection.4.2}%
-\contentsline {section}{\numberline {5}Záver}{3}{section.5}%
+\contentsline {subsubsection}{\numberline {4.2.1}Inicializácia komponentov}{3}{subsubsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.2}Nastavenie frekvencie a hlasitosti}{4}{subsubsection.4.2.2}%
+\contentsline {subsubsection}{\numberline {4.2.3}Displej a zobrazenie informácií}{4}{subsubsection.4.2.3}%
+\contentsline {section}{\numberline {5}Záver}{4}{section.5}%

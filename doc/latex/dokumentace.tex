@@ -28,7 +28,7 @@
         \vspace{\stretch{0.382}}
 
         {\Large Mikroprocesorové a vstavané systémy \\[0.5em]
-        \LARGE Digitálne FM rádio (modul RDA5807M a zosilovač PAM8407) 
+        \LARGE Digitálne FM rádio
          }
 
         \vspace{\stretch{0.618}}
@@ -53,7 +53,9 @@ ktoré umožňuje používateľovi nastavovať frekvenciu v pásme 76MHz až 108
 ovládať hlasitosť.
 
 \section{Použité metódy a technológie}
+V tejto časti je uvedený použitý hardvér a knižnice, ktoré umožnili vypracovanie projektu. 
 Program je napísaný v jazyku C++ vo vývojovm prostredí Arduino IDE. \footnote{\url{https://www.arduino.cc/en/software}}
+
 \subsection{Hardvér}
 \begin{itemize}
     \item Doska ESP32 Wemos D1 R32\footnote{\url{https://docs.platformio.org/en/latest/boards/espressif32/wemos_d1_uno32.html}}
@@ -68,11 +70,21 @@ Program je napísaný v jazyku C++ vo vývojovm prostredí Arduino IDE. \footnot
     \item Adafruit GFX \footnote{\url{https://github.com/adafruit/Adafruit-GFX-Library}}
     \item Adafruit SSD1306 \footnote{\url{https://github.com/adafruit/Adafruit_SSD1306}}
     \item PU2CLR RDA5807 \footnote{\url{https://github.com/pu2clr/RDA5807}} 
+    \item KY040-rotary \footnote{\url{https://github.com/dmachard/KY040-rotary}} 
 \end{itemize}
 
 \section{Použitie}
+Pri zapojení rádia sa inicializujú všetky komponenty a rádio začne hrať na predom
+určenej frekvenci v programe 106,50 MHz. Otočným enkóderom sa 
+dá meniť frekvencia a stlačením tlačidla na enkóderi sa dá prepínať medzi 
+režimom nastavovania frekvencie a hlasitosti. Aktuálne nastavenia sa zobrazujú 
+na OLED displeji.
+
+Ukážka použita: \textbf{XXXXXXXX}
 
 \section{Implementačné detaily}
+Táto kapitola popisuje zapojenie jednotlivých komponentov a ich spracovanie v programe.
+
 \subsection{Zapojenie}
 \subsubsection{Zapojenie FM modulu RDA5807M a OLED displeja}
 
@@ -114,7 +126,7 @@ Program je napísaný v jazyku C++ vo vývojovm prostredí Arduino IDE. \footnot
 \end{tabular}
 \end{minipage}
 
-\subsubsection{Pripojenie zosilňovača PAM8407}
+\subsubsection{Pripojenie zosilňovača PAM8407 a enkodéra KY--040}
 \begin{minipage}[t]{0.48\textwidth}
 \centering
 \textbf{Zosilňovač PAM8407}
@@ -145,13 +157,13 @@ Program je napísaný v jazyku C++ vo vývojovm prostredí Arduino IDE. \footnot
 \hfill
 \begin{minipage}[t]{0.48\textwidth}
 \centering
-\textbf{Enkodér KY-040}
+\textbf{Enkodér KY-040}\\
 \begin{tabular}{|c|c|}
 \hline
 \textbf{Enkodér Pin} & \textbf{ESP32 Pin} \\
 \hline
-CLK & GPIO33 \\
-DT  & GPIO32 \\
+CLK & GPIO35 \\
+DT  & GPIO34 \\
 SW  & GPIO25 \\
 +   & 5V \\
 GND & GND \\
@@ -160,7 +172,25 @@ GND & GND \\
 \end{minipage}
 
 \subsection{Implementácia}
+V tejto časti sa popisuje implementácia digitálneho FM rádia, ktorá zahŕňa prácu so 
+všetkými komponentami a ovládaním cez rotačný enkóder.
+
+\subsubsection{Inicializácia komponentov} Po zapnutí systému sa najprv inicializujú 
+všetky komponenty vrátane OLED displeja, FM prijímača (RDA5807M) a rotačného enkódera 
+(KY-040). Pomocou knižníc pre jednotlivé zariadenia (Adafruit GFX pre OLED, RDA5807 pre 
+FM prijímač, a KY040 pre enkóder) sa zabezpečí správne nastavenie komunikácie cez I2C 
+alebo GPIO piny.
+
+\subsubsection{Nastavenie frekvencie a hlasitosti} 
+Používateľ môže ovládať frekvenciu a hlasitosť rádia pomocou rotačného enkódera. 
+Po stlačení tlačidla enkódera sa prepína režim medzi nastavovaním frekvencie a 
+hlasitosti. V režime frekvencie používateľ nastavuje frekvenciu rádia v rozsahu od 
+76 MHz do 108 MHz. V režime hlasitosti sa nastavuje hlasitosť od 0 do 15.
+
+\subsubsection{Displej a zobrazenie informácií} 
+Aktuálne nastavenia (frekvencia a hlasitosť) sa neustále zobrazujú na OLED displeji.
 
 \section{Záver}
-
+Cieľ projektu sa podarilo úspešne naplniť. Vytvorené digitálne FM rádio spĺňa všetky 
+požiadavky a umožňuje používateľovi jednoducho nastavovať frekvenciu a hlasitosť.
 \end{document}

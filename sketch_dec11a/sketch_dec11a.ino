@@ -49,31 +49,54 @@ void updateDisplay()
 {
   display.clearDisplay();
   display.setTextSize(2);
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(0, 0);
-
-  char status[15];
-  sprintf(status, "Frequency:");
-  display.println(status);
   
+  // Highlight frequency or volume based on isVolumeMode
+  if (isVolumeMode) {
+    // Volume mode: White text on black background
+    display.setTextColor(SSD1306_WHITE, SSD1306_BLACK); // White text, black background
+    display.setCursor(0, 0);
+    char status[15];
+    sprintf(status, "Frequency:");
+    display.println(status);
+    char freq[32];
+    sprintf(freq, "%u.%02u MHz", rx.getFrequency() / 100, rx.getFrequency() % 100);
+    display.println(freq);
+
+    display.setTextSize(1);
+    display.println("");
+
+    display.setTextColor(SSD1306_BLACK, SSD1306_WHITE ); // Black text, white background
+    display.setTextSize(2);
+    char volume[16];
+    sprintf(volume, "Volume: %2.2u", rx.getVolume());
+    display.println(volume);
+  } 
+  else {
+    // Frequency mode: White text on black background
+    display.setCursor(0, 0);
+    display.setTextColor(SSD1306_WHITE, SSD1306_BLACK); // White text, black background
+    char status[15];
+    sprintf(status, "Frequency:");
+    display.println(status);
+    display.setTextColor(SSD1306_BLACK, SSD1306_WHITE ); // Black text, white background
+    char freq[32];
+    sprintf(freq, "%u.%02u MHz", rx.getFrequency() / 100, rx.getFrequency() % 100);
+    display.println(freq);
+
+    display.setTextSize(1);
+    display.println("");
+
+    display.setTextColor(SSD1306_WHITE, SSD1306_BLACK); // White text, black background
+    display.setTextSize(2);
+    char volume[16];
+    sprintf(volume, "Volume: %2.2u", rx.getVolume());
+    display.println(volume);    
+  }
+
   display.setTextSize(1);
-  display.println("");
-
-  display.setTextSize(2);
-  char freq[32];
-  sprintf(freq, "%u.%02u MHz", rx.getFrequency() / 100, rx.getFrequency() % 100);
-  display.println(freq);
-
-  display.setTextSize(1);
-  display.println("");
-
-  display.setTextSize(2);
-  char volume[16];
-  sprintf(volume, "Volume: %2.2u", rx.getVolume());
-  display.println(volume);
-
   display.display();
 }
+
 
 // Function to show the current radio status
 void showStatus()
