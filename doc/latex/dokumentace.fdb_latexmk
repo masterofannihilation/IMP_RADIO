@@ -1,7 +1,7 @@
 # Fdb version 4
-["pdflatex"] 1734019158 "/home/annihilator/00_school/imp/IMP/doc/latex/dokumentace.tex" "dokumentace.pdf" "dokumentace" 1734019159 0
+["pdflatex"] 1734023335 "/home/annihilator/00_school/imp/IMP/doc/latex/dokumentace.tex" "dokumentace.pdf" "dokumentace" 1734023336 0
   "/etc/texmf/web2c/texmf.cnf" 1731929206 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/annihilator/00_school/imp/IMP/doc/latex/dokumentace.tex" 1734019158 6232 373876834dca73ccc8ae440a60f57fee ""
+  "/home/annihilator/00_school/imp/IMP/doc/latex/dokumentace.tex" 1734023335 7258 e255f48ba49ea737db804c2785eda41b ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/cs/xl2.enc" 1356110403 5089 baf7b5391825d2b4c597cc1d451dbb7a ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/cs/xt2.enc" 1356110403 4620 b83f8ae387030048bb9c20acb054cc7a ""
@@ -115,10 +115,11 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1681034085 39561 34c98e380bf7c7201ee6a7909aff625a ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1731934799 4623455 fa0568a71dd9a288d6c226ee477506c6 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1731934865 7880963 5632e7cc20ca6ee0e772b35899f887b5 ""
-  "dokumentace.aux" 1734019159 2595 0baa1f48e8eb7ccec4db7b8f3eda9ac2 "pdflatex"
-  "dokumentace.out" 1734019159 2460 ad4483c81fdfff45625b10bbd7143bb3 "pdflatex"
-  "dokumentace.tex" 1734019158 6232 373876834dca73ccc8ae440a60f57fee ""
-  "dokumentace.toc" 1734019159 1336 ae4dd51ad06de3d11f4f6620d67fd1de "pdflatex"
+  "dokumentace.aux" 1734023335 2825 17eec1865330f6ca1b4b07be09430168 "pdflatex"
+  "dokumentace.out" 1734023335 2534 09b1517e95941be91df7dbfc62a1bf09 "pdflatex"
+  "dokumentace.tex" 1734023335 7258 e255f48ba49ea737db804c2785eda41b ""
+  "dokumentace.toc" 1734023335 1398 31b047ec74f65e3c3d32f471c3457f69 "pdflatex"
+  "zapojenie.jpg" 1734021554 1719315 44ca36264a9750dcaedbfa4eece06232 ""
   (generated)
   "dokumentace.aux"
   "dokumentace.log"

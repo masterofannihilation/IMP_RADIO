@@ -1,3 +1,9 @@
+/*
+* @author Boris Hatala (xhatal02)
+* @file 
+* @date 12.12.2024
+*/
+
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
@@ -24,35 +30,17 @@
 
 bool isVolumeMode = false; // Track whether encoder changes volume or frequency
 
-// Create OLED object
+// Parts objects
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &SPI, OLED_DC, OLED_RESET, OLED_CS);
-
-RDA5807 rx; // RDA5807 object
-
-// Create KY040 rotary encoder object
+RDA5807 rx;
 KY040 myEncoder(ENCODER_CLK, ENCODER_DT, ENCODER_SW);
 
-// Function to show help on serial monitor
-void showHelp()
-{
-  Serial.println("Type U to increase and D to decrease the frequency");
-  Serial.println("Type S or s to seek station Up or Down");
-  Serial.println("Type + or - to volume Up or Down");
-  Serial.println("Type 0 to show current status");
-  Serial.println("Type ? to this help.");
-  Serial.println("==================================================");
-  delay(1000);
-}
-
-// Function to update the OLED display
 void updateDisplay()
 {
   display.clearDisplay();
   display.setTextSize(2);
   
-  // Highlight frequency or volume based on isVolumeMode
   if (isVolumeMode) {
-    // Volume mode: White text on black background
     display.setTextColor(SSD1306_WHITE, SSD1306_BLACK); // White text, black background
     display.setCursor(0, 0);
     char status[15];
@@ -72,7 +60,6 @@ void updateDisplay()
     display.println(volume);
   } 
   else {
-    // Frequency mode: White text on black background
     display.setCursor(0, 0);
     display.setTextColor(SSD1306_WHITE, SSD1306_BLACK); // White text, black background
     char status[15];
@@ -98,7 +85,7 @@ void updateDisplay()
 }
 
 
-// Function to show the current radio status
+// Show current radio status
 void showStatus()
 {
   char aux[80];
@@ -112,8 +99,17 @@ void showStatus()
 void onButtonPress()
 {
   Serial.println("button press");
-  isVolumeMode = !isVolumeMode; // Toggle mode
+  isVolumeMode = !isVolumeMode;
   updateDisplay();
+}
+
+void isVolZero(int volume){
+  // If volume is set to 0, mute the audio
+  if (volume == 0) {
+    rx.setMute(true);
+  } else {
+    rx.setMute(false); // Unmute if volume is above 0
+  }
 }
 
 // Rotary Encoder Callback for Right Turn
@@ -123,21 +119,26 @@ void onEncoderRight()
   if (isVolumeMode) {
     int newVolume = constrain(rx.getVolume() + 1, 0, 15);
     rx.setVolume(newVolume);
-  } else {
+
+    isVolZero(newVolume);    
+  } 
+  else {
     int newFrequency = constrain(rx.getFrequency() + 10, 8700, 10800); // FM range in 100kHz steps
     rx.setFrequency(newFrequency);
   }
   showStatus();
 }
 
-// Rotary Encoder Callback for Left Turn
 void onEncoderLeft()
 {
   Serial.println("counter clockwise");
   if (isVolumeMode) {
     int newVolume = constrain(rx.getVolume() - 1, 0, 15);
     rx.setVolume(newVolume);
-  } else {
+
+    isVolZero(newVolume);
+  } 
+  else {
     int newFrequency = constrain(rx.getFrequency() - 10, 8700, 10800); // FM range in 100kHz steps
     rx.setFrequency(newFrequency);
   }
@@ -166,17 +167,15 @@ void setup()
   Wire.begin(ESP32_I2C_SDA, ESP32_I2C_SCL);
   rx.setup();
 
-  rx.setVolume(0); // Set initial volume
+  rx.setVolume(2); // Set initial volume
   delay(500);
 
   // Set initial station
-  Serial.print("\nStation 106.5MHz");
   rx.setFrequency(10650); // Frequency * 100
 
   // Enable RDS
   rx.setRDS(true);
 
-  showHelp();
   showStatus();
 
   // Initialize KY040 Rotary Encoder

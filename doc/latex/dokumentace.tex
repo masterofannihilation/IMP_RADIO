@@ -80,12 +80,17 @@ dá meniť frekvencia a stlačením tlačidla na enkóderi sa dá prepínať med
 režimom nastavovania frekvencie a hlasitosti. Aktuálne nastavenia sa zobrazujú 
 na OLED displeji.
 
-Ukážka použita: \textbf{XXXXXXXX}
+Ukážka použita: \-\ \url{https://drive.google.com/file/d/1KT2sNgN7PxN1Bjnalx79Aksi3KVg7GT5/view?usp=sharing}
 
 \section{Implementačné detaily}
 Táto kapitola popisuje zapojenie jednotlivých komponentov a ich spracovanie v programe.
 
 \subsection{Zapojenie}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.6\textwidth, angle=90]{zapojenie.jpg}
+\caption{Zapojenie rádia}
+\end{figure}
 \subsubsection{Zapojenie FM modulu RDA5807M a OLED displeja}
 
 \begin{minipage}[t]{0.48\textwidth}
@@ -193,4 +198,16 @@ Aktuálne nastavenia (frekvencia a hlasitosť) sa neustále zobrazujú na OLED d
 \section{Záver}
 Cieľ projektu sa podarilo úspešne naplniť. Vytvorené digitálne FM rádio spĺňa všetky 
 požiadavky a umožňuje používateľovi jednoducho nastavovať frekvenciu a hlasitosť.
+
+\newpage
+\section{Zdroje}
+\begin{itemize}
+    \item ESP32 Wemos D1 R32 Board \-\ \url{https://www.fit.vut.cz/person/simekv/public/IMP_projekt_board_ESP32_Wemos_D1_R32.pdf}
+    \item Adafruit OLED displej \-\ \url{https://www.hadex.cz/m508a-displej-oled-096-128x64-znaku-7pinu-bily/}
+    \item FM príjmač, modul RRD102 V2.0 /IO RDA5807M \-\ \url{https://www.hadex.cz/m501a-fm-prijimac-pro-arduino-modul-rrd102-v20-io-rda5807m/}
+    \item Zosilovač PAM8407 Oficiálna dokumentácia \-\ \url{https://www.diodes.com/assets/Datasheets/products_inactive_data/PAM8407.pdf}
+    \item Zosilovač PAM8407 schéma \-\ \url{https://www.fit.vut.cz/person/simekv/public/IMP_projekt_digitalni_radio_PAM8407_Module.pdf}
+    \item Enkóder KY-040 \-\ \url{https://elty.pl/cs_CZ/p/Impulsni-modul-snimace-KY-040/1155}
+\end{itemize}
+
 \end{document}
